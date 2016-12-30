@@ -1,0 +1,9 @@
+extend ./layout
+
+block content
+	.container
+		.articleDetail
+			each item in articles
+				p title: #{item.title}
+				p view: #{item.view+1}
+				p #{item.detail}

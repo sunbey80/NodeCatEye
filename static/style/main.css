@@ -1,0 +1,144 @@
+*{
+	margin: 0;
+	padding: 0;
+	font-size: 1rem;
+	color: #333333;
+	font-family: Microsoft YaHei;
+}
+a{
+	text-decoration: none;
+}
+a:hover{
+	color: #ff7866;
+}
+ul,li{
+	list-style: none;
+}
+.cf:after{
+	display: block;
+	content: "";
+	clear: both;
+}
+input,textarea,button{
+	outline: none;
+}
+
+.header{
+	line-height: 3rem;
+	text-align: center;
+	color: #ffffff;
+	background-color: #343434;
+}
+.header a{
+	color: #ffffff;
+	margin: 0 1rem;
+}
+
+.articleList{
+	padding: 1.2rem;
+}
+.articleList ul li{
+	border-bottom: 1px solid #ddd;
+}
+.articleList ul li:hover{
+	background-color: #fcfcfc;
+}
+.articleList ul li a{
+	display: block;
+	padding: 1rem .5rem;
+	line-height: 1rem;
+}
+
+.articleDetail{
+	padding: 1.2rem;
+	text-align: center;
+}
+.articleDetail p{
+	padding: 1rem .5rem;
+	line-height: 1rem;
+}
+.articleDetail p:nth-child(2){
+	background-color: #f7f7f7;
+	color: #999999;
+}
+
+/*adminList*/
+.adminList ul li{
+	height: 3rem;
+}
+.adminList ul li a{
+	float: left;
+	width: 70%
+}
+.adminList ul li button{
+	float: right;
+	width: 10%;
+	height: 2rem;
+	border: none;
+	color: #ffffff;
+	margin-top: .5rem;
+	cursor: pointer;
+	margin-left: .5rem;
+	border-radius: .2rem;
+}
+.adminList ul li .btnEdit{
+	background-color: #6bb63d;
+}
+.adminList ul li .btnDelete{
+	background-color: #ffac41;
+}
+
+.adminEdit{
+	padding: 1.2rem;
+}
+.adminEdit p{
+	padding-bottom: 1rem;
+}
+.adminEdit p span{
+	float: left;
+	width: 15%;
+	line-height: 3rem;
+	text-align: right;
+}
+.adminEdit p input{
+	float: right;
+	width: 80%;
+	padding: .5rem;
+	height: 30px;
+	font-size: 1rem;
+	color: #666666;
+	border: 1px solid #e4e4e4;
+}
+.adminEdit p textarea{
+	float: right;
+	width: 80%;
+	padding: .5rem;
+	height: 260px;
+	color: #666666;	
+	border: 1px solid #e4e4e4;
+}
+.adminEdit .submit{
+	text-align: center;
+}
+.adminEdit .submit button{
+	border: none;
+	width: 8rem;
+	height: 2.6rem;
+	margin: 0 .2rem;
+	border-radius: .3rem;
+	color: #ffffff;
+	cursor: pointer;
+}
+.adminEdit .submit button.btnsub{
+	background-color: #ffac41;
+}
+.adminEdit .submit a.btnbak{
+	display: inline-block;
+	width: 8rem;
+	line-height: 2.6rem;
+	margin: 0 .2rem;
+	border-radius: .3rem;
+	color: #ffffff;
+	cursor: pointer;
+	background-color: #c4c4c4;
+}

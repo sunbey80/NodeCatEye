@@ -1,0 +1,15 @@
+extend ./layout
+
+block content
+	.container
+		form.adminEdit(method = 'post' action = '/editSubmit')
+			input(name = '_id' value = '#{article._id}' type = 'hidden')
+			p.cf
+				span title:
+				input(name = 'title' value = '#{article.title}')
+			p.cf
+				span content:
+				textarea(name = 'detail') #{article.detail}
+			div.submit
+				button.btnsub(type = 'submit') Submit
+				a.btnbak(onclick = 'window.location.href = "/admin"') Back
