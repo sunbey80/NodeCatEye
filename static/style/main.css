@@ -19,7 +19,7 @@ ul,li{
 	content: "";
 	clear: both;
 }
-input,textarea,button{
+input,textarea,button,select{
 	outline: none;
 }
 
@@ -51,15 +51,22 @@ input,textarea,button{
 
 .articleDetail{
 	padding: 1.2rem;
-	text-align: center;
 }
 .articleDetail p{
-	padding: 1rem .5rem;
-	line-height: 1rem;
+	display: flex;
+	padding: .5rem;
+	line-height: 1.4rem;
 }
-.articleDetail p:nth-child(2){
+.articleDetail p.view{
 	background-color: #f7f7f7;
 	color: #999999;
+}
+.articleDetail p span.sp1{
+	width: 120px;
+	flex-shrink:0;
+}
+.articleDetail p span.sp2{
+	flex-grow:1;
 }
 
 /*adminList*/
@@ -92,26 +99,33 @@ input,textarea,button{
 	padding: 1.2rem;
 }
 .adminEdit p{
+	display: flex;
 	padding-bottom: 1rem;
 }
 .adminEdit p span{
-	float: left;
+	flex-shrink: 0;
 	width: 15%;
-	line-height: 3rem;
+	padding-right: 10px;
+	line-height: 44px;
 	text-align: right;
 }
 .adminEdit p input{
-	float: right;
-	width: 80%;
-	padding: .5rem;
+	flex-grow: 1;
+	padding: 6px .5rem;
 	height: 30px;
 	font-size: 1rem;
 	color: #666666;
 	border: 1px solid #e4e4e4;
 }
+.adminEdit p select{
+	flex-grow: 1;
+	height: 44px;
+	font-size: 1rem;
+	color: #666666;
+	border: 1px solid #e4e4e4;
+}
 .adminEdit p textarea{
-	float: right;
-	width: 80%;
+	flex-grow: 1;
 	padding: .5rem;
 	height: 260px;
 	color: #666666;	

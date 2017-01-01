@@ -4,12 +4,47 @@ block content
 	.container
 		form.adminEdit(method = 'post' action = '/editSubmit')
 			input(name = '_id' value = '#{article._id}' type = 'hidden')
-			p.cf
-				span title:
+			p
+				span 影片名称:
 				input(name = 'title' value = '#{article.title}')
-			p.cf
-				span content:
+			p
+				span 概述:
+				input(name = 'summary' value = '#{article.summary}')
+			p
+				span 上映信息:
+				input(name = 'oninfor' value = '#{article.oninfor}')
+			p
+				span 想看人数:
+				input(name = 'want' value = '#{article.want}')
+			p
+				span 评分:
+				input(name = 'score' value = '#{article.score}')
+			p
+				span 销售状态:
+				select(name = 'sale' class='sale')
+					option(value = '0' selected) 未上映
+					option(value = '1') 预售
+					option(value = '2') 购票
+			p
+				span 封面地址:
+				input(name = 'image' value = '#{article.image}')
+			p
+				span 具体描述:
 				textarea(name = 'detail') #{article.detail}
 			div.submit
 				button.btnsub(type = 'submit') Submit
 				a.btnbak(onclick = 'window.location.href = "/admin"') Back
+
+	script.
+		$(function(){
+			var strSale = (#{article.sale}).toString()
+	
+
+			$(".sale option").each(function(){
+				if($(this).val() === strSale){
+					$(this).attr("selected","selected")
+				}
+			})
+		})
+		
+

@@ -3,6 +3,7 @@ var jade = require('jade')
 var path = require('path')
 var express = require('express')
 var bodyParser = require('body-parser')
+var fs = require('fs')
 var app = express()
 var port = 3000
 
@@ -29,7 +30,9 @@ var moviesSchema = new mongoose.Schema({
   	title: String,
   	summary: String,
   	oninfor: String,
-  	score: String,
+  	want: String,
+  	score: {type:String,default:'0.0'},
+  	sale: String,
   	image: String,
   	detail: String,
   	view: {type:Number,default:0}
@@ -87,7 +90,19 @@ app.get('/edit/:id',function(req,res,next){
 //admin_gotowrite page
 app.get('/write',function(req,res,next){
 
-    res.render('admin_edit', {title:'Movies',article:{title:'',detail:''}})
+    res.render('admin_edit', {
+    	title:'Movies',
+    	article:{
+    		title:'',
+    		summary:'',
+    		oninfor:'',
+    		want:'',
+    		score:'',
+    		sale:'0',
+    		image:'',
+    		detail:'',
+    	}
+    })
 
 })
 
@@ -96,6 +111,12 @@ app.post('/editSubmit',function(req,res,next){
 
 	var id = req.body._id
 	var title = req.body.title
+	var summary = req.body.summary
+	var oninfor = req.body.oninfor
+	var want = req.body.want
+	var score = req.body.score
+	var sale = req.body.sale
+	var image = req.body.image
 	var detail = req.body.detail
 
 	if(id !== 'undefined'){ //update
@@ -103,8 +124,14 @@ app.post('/editSubmit',function(req,res,next){
 			_id:id
 		},{
 			$set:{
-				title:title,
-				detail:detail
+				title: title,
+				summary: summary,
+			  	oninfor: oninfor,
+			  	want: want,
+			  	score: score,
+			  	sale: sale,
+			  	image: image,
+			  	detail: detail
 			}
 		},function(err){
 			//render aiticle page
@@ -113,11 +140,13 @@ app.post('/editSubmit',function(req,res,next){
 
 	}else{ //new add
 		var data = new blogModel({
-			title:title,
-			summary: '',
-		  	oninfor: '',
-		  	score: '',
-		  	image: '',
+			title: title,
+			summary: summary,
+		  	oninfor: oninfor,
+		  	want: want,
+		  	score: score,
+		  	sale: sale,
+		  	image: image,
 		  	detail: detail,
 		  	view: 0
 		})
@@ -139,6 +168,43 @@ app.get('/delete/:id',function(req,res,next){
 		//render admin page
 		res.redirect('/admin')
 	})
+})
+
+//get image file
+app.get('/image/:id',function(req,res,next){
+	var id = req.params.id
+	
+	fs.readFile('./upload/movieImgs/'+ id,'binary',function(err, file) {
+		if (err) {
+		  console.log(err);
+		  return;
+		}else{
+
+		  res.writeHead(200, {'Content-Type': 'image/jpeg'});
+		  res.write(file,'binary');
+		  res.end();
+
+		}
+	})
+	
+})
+
+
+//data API
+//movies
+app.get('/APImovies',function(req,res,next){
+	var onsale = req.query.onsale
+
+	if(onsale!=='undefined' && onsale==='true'){
+		blogModel.find({sale:{$in:['1','2']}},function(err,movies){
+			res.send(movies)
+		})
+	}else if(onsale!=='undefined' && onsale==='false'){
+		blogModel.find({sale:'0'},function(err,movies){
+			res.send(movies)
+		})
+	}
+	
 })
 
 

@@ -4,6 +4,30 @@ block content
 	.container
 		.articleDetail
 			each item in articles
-				p title: #{item.title}
-				p view: #{item.view+1}
-				p #{item.detail}
+				p 
+					span.sp1 影片名称:
+					span.sp2 #{item.title}
+				p.view 
+					span.sp1 查看次数:
+					span.sp2 #{item.view+1}
+				p 
+					span.sp1 概述:
+					span.sp2 #{item.summary}
+				p 
+					span.sp1 上映信息:
+					span.sp2 #{item.oninfor}
+				p 
+					span.sp1 想看人数:
+					span.sp2 #{item.want}
+				p 
+					span.sp1 评分:
+					span.sp2 #{item.score}
+				p 
+					span.sp1 销售状态:
+					span.sp2 #{item.sale} (0为未上映，1为预售，2为购票)
+				p 
+					span.sp1 封面地址:
+					span.sp2 #{item.image}
+				p 
+					span.sp1 具体描述:
+					span.sp2 #{item.detail}
