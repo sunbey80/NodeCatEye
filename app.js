@@ -3,6 +3,8 @@ var jade = require('jade')
 var path = require('path')
 var express = require('express')
 var bodyParser = require('body-parser')
+var multiparty = require('multiparty');
+var util = require('util');
 var fs = require('fs')
 var app = express()
 var port = 3000
@@ -10,6 +12,7 @@ var port = 3000
 app.set('views','./views')
 app.set('view engine','jade')
 app.use(express.static(path.join(__dirname, '/static')))
+app.use(express.static(path.join(__dirname, '/upload')))
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
@@ -81,7 +84,7 @@ app.get('/edit/:id',function(req,res,next){
 	blogModel.find({_id:id},function(err,articles){
 		articles.forEach(function(item,err){
 
-			res.render('admin_edit', {title:'Movies',article:item})
+			res.render('admin_edit', {title:'Movies',article:item,uploadImg:'0'})
 
 		})
 	})
@@ -101,60 +104,108 @@ app.get('/write',function(req,res,next){
     		sale:'0',
     		image:'',
     		detail:'',
-    	}
+    	},
+    	uploadImg:'0'
     })
 
 })
 
 //admin_edit_submit process or add new write process
-app.post('/editSubmit',function(req,res,next){
+app.post('/editSubmit/:id',function(req,res,next){
 
-	var id = req.body._id
-	var title = req.body.title
-	var summary = req.body.summary
-	var oninfor = req.body.oninfor
-	var want = req.body.want
-	var score = req.body.score
-	var sale = req.body.sale
-	var image = req.body.image
-	var detail = req.body.detail
+	var urlId = req.params.id
 
-	if(id !== 'undefined'){ //update
-		blogModel.update({
-			_id:id
-		},{
-			$set:{
-				title: title,
-				summary: summary,
-			  	oninfor: oninfor,
-			  	want: want,
-			  	score: score,
-			  	sale: sale,
-			  	image: image,
-			  	detail: detail
-			}
-		},function(err){
-			//render aiticle page
-			res.redirect('/admin')
-		})
-
-	}else{ //new add
-		var data = new blogModel({
-			title: title,
-			summary: summary,
-		  	oninfor: oninfor,
-		  	want: want,
-		  	score: score,
-		  	sale: sale,
-		  	image: image,
-		  	detail: detail,
-		  	view: 0
-		})
-		data.save()
-
-		//render admin page
-		res.redirect('/admin')
+	var form = new multiparty.Form()
+	form.encoding = 'utf-8'
+	if(urlId === '1'){
+		form.uploadDir = "upload/movieImgs/"
+		form.maxFilesSize = 2 * 1024 * 1024	
 	}
+	form.parse(req, function(err, fields, files) {
+		
+		var id = fields._id[0]
+		var title = fields.title[0]
+		var summary = fields.summary[0]
+		var oninfor = fields.oninfor[0]
+		var want = fields.want[0]
+		var score = fields.score[0]
+		var sale = fields.sale[0]
+		var image = fields.image[0]
+		var detail = fields.detail[0]
+		
+		if(urlId === '1'){
+			var fileOne = files.upload[0]
+			var originalFile = fileOne.originalFilename
+			var oFileType = originalFile.substring(originalFile.lastIndexOf('.'))
+			var nameRandom = 'movie' + new Date().getTime()
+			var uploadImage = nameRandom + oFileType
+			//rename file
+			fs.renameSync(fileOne.path,form.uploadDir + uploadImage)
+
+			//render admin_admin.jade
+			res.render('admin_edit',{
+	    		title:'Movies',
+				article:{
+					_id: id,
+					title: title,
+					summary: summary,
+					oninfor: oninfor,
+					want: want,
+					score: score,
+					sale: sale,
+					image:uploadImage,
+					detail: detail,
+				},
+	    		uploadImg:'0'
+			})
+		}else 
+		if(urlId === '0'){
+			var uploadImage = fields.image[0]
+
+			//add data to database
+			console.log(id)
+			if(id !== 'undefined'){ //update
+				console.log(0)
+				blogModel.update({
+					_id:id
+				},{
+					$set:{
+						title: title,
+						summary: summary,
+					  	oninfor: oninfor,
+					  	want: want,
+					  	score: score,
+					  	sale: sale,
+					  	image: image,
+					  	detail: detail
+					}
+				},function(err){
+					console.log(err)
+				})
+				//render aiticle page
+				res.redirect('/admin')
+
+			}else{ //new add
+				console.log(0)
+				var data = new blogModel({
+					title: title,
+					summary: summary,
+				  	oninfor: oninfor,
+				  	want: want,
+				  	score: score,
+				  	sale: sale,
+				  	image: image,
+				  	detail: detail,
+				  	view: 0
+				})
+				data.save()
+
+				//render admin page
+				res.redirect('/admin')
+			}
+		}
+		
+	})
 	
 })
 
@@ -169,26 +220,6 @@ app.get('/delete/:id',function(req,res,next){
 		res.redirect('/admin')
 	})
 })
-
-//get image file
-app.get('/image/:id',function(req,res,next){
-	var id = req.params.id
-	
-	fs.readFile('./upload/movieImgs/'+ id,'binary',function(err, file) {
-		if (err) {
-		  console.log(err);
-		  return;
-		}else{
-
-		  res.writeHead(200, {'Content-Type': 'image/jpeg'});
-		  res.write(file,'binary');
-		  res.end();
-
-		}
-	})
-	
-})
-
 
 //data API
 //movies

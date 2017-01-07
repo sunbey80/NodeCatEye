@@ -2,7 +2,7 @@ extend ./layout
 
 block content
 	.container
-		form.adminEdit(method = 'post' action = '/editSubmit')
+		form.adminEdit(method = 'post' action = '/editSubmit/#{uploadImg}' enctype='multipart/form-data')
 			input(name = '_id' value = '#{article._id}' type = 'hidden')
 			p
 				span 影片名称:
@@ -27,7 +27,11 @@ block content
 					option(value = '2') 购票
 			p
 				span 封面地址:
-				input(name = 'image' value = '#{article.image}')
+				a.upBtn 上传
+				input(type='file' name = 'upload' multiple="multiple" id = 'uploadBtn')
+				input(type='hidden' name = 'image' value = '#{article.image}')
+			p.uploadImg
+				image(src = '/movieImgs/#{article.image}')
 			p
 				span 具体描述:
 				textarea(name = 'detail') #{article.detail}
@@ -38,12 +42,19 @@ block content
 	script.
 		$(function(){
 			var strSale = (#{article.sale}).toString()
-	
 
 			$(".sale option").each(function(){
 				if($(this).val() === strSale){
 					$(this).attr("selected","selected")
 				}
+			})
+	
+			$(".upBtn").click(function(){
+				$("#uploadBtn").click()
+			})
+			$("#uploadBtn").change(function(){
+				$(".adminEdit").attr('action','/editSubmit/1')
+				$(".submit .btnsub").click()
 			})
 		})
 		

@@ -131,6 +131,27 @@ input,textarea,button,select{
 	color: #666666;	
 	border: 1px solid #e4e4e4;
 }
+.adminEdit .uploadImg{
+	padding-left: 100px;
+}
+.adminEdit .uploadImg img{
+	width: 120px;
+	height: 167px;
+	border-radius: .3rem;
+}
+.adminEdit .upBtn{
+	display: inline-block;
+	width: 100px;
+	line-height: 44px;
+	color: #ffffff;
+	background-color: #d0d0d0;
+	border-radius: .3rem;
+	text-align: center;
+	cursor: pointer;
+}
+.adminEdit #uploadBtn{
+	display: none;
+}
 .adminEdit .submit{
 	text-align: center;
 }
