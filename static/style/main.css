@@ -132,7 +132,8 @@ input,textarea,button,select{
 	border: 1px solid #e4e4e4;
 }
 .adminEdit .uploadImg{
-	padding-left: 100px;
+	padding-left: 15%;
+	margin-left: 10px;
 }
 .adminEdit .uploadImg img{
 	width: 120px;

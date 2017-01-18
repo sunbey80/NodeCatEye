@@ -20,7 +20,8 @@ app.use(bodyParser.json())
 app.listen(port)
 console.log('server is listening on port' + port)
 
-mongoose.connect('mongodb://sunbey:123456@ds149258.mlab.com:49258/cateye')
+//mongoose.connect('mongodb://sunbey:123456@ds149258.mlab.com:49258/cateye')
+mongoose.connect('mongodb://127.0.0.1:27017/cateye')
 var db = mongoose.connection
 
 db.on('error', console.error.bind(console, 'connection error:'))
@@ -30,15 +31,21 @@ db.once('open', function (callback) {
 
 //set schema
 var moviesSchema = new mongoose.Schema({
-  	title: String,
-  	summary: String,
-  	oninfor: String,
-  	want: String,
-  	score: {type:String,default:'0.0'},
-  	sale: String,
-  	image: String,
-  	detail: String,
-  	view: {type:Number,default:0}
+  	title: String, //电影名
+  	summary: String, //一句话概括
+  	oninfor: String, //上映信息
+  	want: String, //想看人数
+  	score: {type:String,default:'0.0'}, //评分 默认0
+  	sale: String, //销售状态
+  	image: String, //电影封面
+  	detail: String, //详细描述
+  	view: {type:Number,default:0}, //查看次数
+  	title_en: String, //电影英文名
+  	sort: String, //所属分类
+  	area: String, //所属地区
+  	last_time: String, //时长（分钟）
+  	actor: String, //演员
+  	photos: String //剧照
 })
 //pub model
 var blogModel = db.model('movies',moviesSchema)
@@ -104,6 +111,12 @@ app.get('/write',function(req,res,next){
     		sale:'0',
     		image:'',
     		detail:'',
+    		title_en: '', 
+    		sort: '',
+    		area: '',
+    		last_time: '',
+    		actor: '',
+    		photos: ''
     	},
     	uploadImg:'0'
     })
@@ -113,13 +126,13 @@ app.get('/write',function(req,res,next){
 //admin_edit_submit process or add new write process
 app.post('/editSubmit/:id',function(req,res,next){
 
-	var urlId = req.params.id
+	var urlId = req.params.id //urlId: 1- upload image; 0- don't upload image
 
 	var form = new multiparty.Form()
 	form.encoding = 'utf-8'
 	if(urlId === '1'){
 		form.uploadDir = "upload/movieImgs/"
-		form.maxFilesSize = 2 * 1024 * 1024	
+		form.maxFilesSize = 5 * 1024 * 1024	
 	}
 	form.parse(req, function(err, fields, files) {
 		
@@ -132,6 +145,29 @@ app.post('/editSubmit/:id',function(req,res,next){
 		var sale = fields.sale[0]
 		var image = fields.image[0]
 		var detail = fields.detail[0]
+		var title_en = fields.title_en[0]
+		var sort = fields.sort[0]
+		var area = fields.area[0]
+		var last_time = fields.last_time[0]
+		var actor = fields.actor[0]
+		var photos = fields.photos[0]
+
+		var setObj = {
+			title: title,
+			summary: summary,
+		  	oninfor: oninfor,
+		  	want: want,
+		  	score: score,
+		  	sale: sale,
+		  	image: image,
+		  	detail: detail,
+		  	title_en: title_en,
+		  	sort: sort,
+		  	area: area,
+		  	last_time: last_time,
+		  	actor: actor,
+		  	photos: photos
+		}
 		
 		if(urlId === '1'){
 			var fileOne = files.upload[0]
@@ -153,8 +189,14 @@ app.post('/editSubmit/:id',function(req,res,next){
 					want: want,
 					score: score,
 					sale: sale,
-					image:uploadImage,
+					image: uploadImage,
 					detail: detail,
+				  	title_en: title_en,
+				  	sort: sort,
+				  	area: area,
+				  	last_time: last_time,
+				  	actor: actor,
+				  	photos: photos
 				},
 	    		uploadImg:'0'
 			})
@@ -163,22 +205,11 @@ app.post('/editSubmit/:id',function(req,res,next){
 			var uploadImage = fields.image[0]
 
 			//add data to database
-			console.log(id)
 			if(id !== 'undefined'){ //update
-				console.log(0)
 				blogModel.update({
 					_id:id
 				},{
-					$set:{
-						title: title,
-						summary: summary,
-					  	oninfor: oninfor,
-					  	want: want,
-					  	score: score,
-					  	sale: sale,
-					  	image: image,
-					  	detail: detail
-					}
+					$set: setObj
 				},function(err){
 					console.log(err)
 				})
@@ -186,18 +217,7 @@ app.post('/editSubmit/:id',function(req,res,next){
 				res.redirect('/admin')
 
 			}else{ //new add
-				console.log(0)
-				var data = new blogModel({
-					title: title,
-					summary: summary,
-				  	oninfor: oninfor,
-				  	want: want,
-				  	score: score,
-				  	sale: sale,
-				  	image: image,
-				  	detail: detail,
-				  	view: 0
-				})
+				var data = new blogModel(setObj)
 				data.save()
 
 				//render admin page
@@ -224,18 +244,32 @@ app.get('/delete/:id',function(req,res,next){
 //data API
 //movies
 app.get('/APImovies',function(req,res,next){
-	var onsale = req.query.onsale
 
-	if(onsale!=='undefined' && onsale==='true'){
-		blogModel.find({sale:{$in:['1','2']}},function(err,movies){
-			res.send(movies)
-		})
-	}else if(onsale!=='undefined' && onsale==='false'){
-		blogModel.find({sale:'0'},function(err,movies){
-			res.send(movies)
-		})
+	if(req.query.onsale){
+		var onsale = req.query.onsale
+
+		//search by onsale
+		if(onsale!=='undefined' && onsale==='true'){
+			blogModel.find({sale:{$in:['1','2']}},function(err,movies){
+				res.send(movies)
+			})
+		}else if(onsale!=='undefined' && onsale==='false'){
+			blogModel.find({sale:'0'},function(err,movies){
+				res.send(movies)
+			})
+		}
+	}else
+
+	if(req.query._id){
+		var id = req.query._id
+
+		if(id!=='undefined'){
+			blogModel.find({_id:id},function(err,movies){
+				res.send(movies)
+			})
+		}
 	}
-	
+
 })
 
 

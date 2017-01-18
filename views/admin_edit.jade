@@ -20,6 +20,24 @@ block content
 				span 评分:
 				input(name = 'score' value = '#{article.score}')
 			p
+				span 影片英文名:
+				input(name = 'title_en' value = '#{article.title_en}')
+			p
+				span 所属分类:
+				input(name = 'sort' value = '#{article.sort}')
+			p
+				span 所属地区:
+				input(name = 'area' value = '#{article.area}')
+			p
+				span 时长分钟:
+				input(name = 'last_time' value = '#{article.last_time}')
+			p
+				span 演员:
+				input(name = 'actor' value = '#{article.actor}')
+			p
+				span 剧照:
+				input(name = 'photos' value = '#{article.photos}')
+			p
 				span 销售状态:
 				select(name = 'sale' class='sale')
 					option(value = '0' selected) 未上映
